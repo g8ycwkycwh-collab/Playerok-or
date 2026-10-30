@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Playerok</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="logo"><span class="logo-dot"></span><span class="logo-text">Playerok</span></div>
+      <div class="header-right">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="ru">RU</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <button class="icon-btn" id="btn-bell" aria-label="Уведомления">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="content" id="content">
+      <!-- HOME -->
+      <section class="screen active" id="screen-home">
+        <div class="promo-banner">
+          <div class="promo-content">
+            <div class="promo-title">HALLOWEEN<br>НА PLAYEROK!</div>
+            <div class="promo-sub">Пополни игры — получи крутой приз</div>
+            <button class="promo-btn" id="btn-promo">Участвовать</button>
+          </div>
+          <div class="promo-right">
+            <div class="uc-badge">UC</div>
+            <div class="promo-win">ВЫИГРАЙ<br>СЕГОДНЯ</div>
+          </div>
+        </div>
+
+        <div class="search-box">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="main-search" placeholder="Поиск сделок, игр и ников" autocomplete="off" />
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" data-go="deals">Сделки</button>
+          <button class="tab" data-go="chats">Чаты</button>
+          <button class="tab" data-go="history">История</button>
+          <button class="tab" data-go="reviews">Отзывы</button>
+          <button class="tab" data-go="rules">Правила</button>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div class="avatar shop" id="home-avatar">
+              <img id="home-avatar-img" alt="" style="display:none;width:100%;height:100%;border-radius:12px;object-fit:cover;" />
+              <span id="home-avatar-fallback">?</span>
+            </div>
+            <div class="profile-info">
+              <div class="profile-name" id="home-name">Загрузка...</div>
+              <div class="profile-username" id="home-username">@user</div>
+            </div>
+          </div>
+          <div class="balance-label">Баланс</div>
+          <div class="balance-main" id="balance-rub">0,00 ₽</div>
+          <div class="balance-sub">
+            <span id="balance-usd">0,00 $</span>
+            <span class="star" id="balance-stars">0 ★</span>
+            <span id="balance-ton">0 TON</span>
+          </div>
+          <div class="balance-actions">
+            <button class="btn-primary" id="btn-deposit">Пополнить</button>
+            <button class="btn-secondary" id="btn-withdraw">Вывести</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEALS -->
+      <section class="screen" id="screen-deals">
+        <div class="section-header">
+          <h2>Сделки</h2>
+          <button class="refresh-btn" id="btn-refresh-deals">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          </button>
+        </div>
+        <p class="section-desc">Активные, завершённые и приглашения.</p>
+        <div class="search-box">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="deals-search" placeholder="Поиск: код, игра, ник, описание..." />
+        </div>
+        <div class="filter-row">
+          <button class="btn-secondary small" id="btn-filters">Фильтры</button>
+          <button class="btn-primary small" id="btn-find">Найти</button>
+        </div>
+        <div class="deals-tabs">
+          <button class="deals-tab active" data-tab="my">Мои сделки</button>
+          <button class="deals-tab" data-tab="invites">Приглашения</button>
+        </div>
+        <div class="chips">
+          <button class="chip active">Все</button>
+          <button class="chip">Активные</button>
+          <button class="chip">Нужен ответ</button>
+        </div>
+        <p class="hint-text">Строка — открыть сделку. Синяя подсказка под названием — что сделать сейчас. <a href="#" id="link-more">Подробнее</a></p>
+        <div class="deal-list" id="deal-list">
+          <div class="empty-state">
+            <div class="empty-icon">📦</div>
+            <div class="empty-title">Сделок пока нет</div>
+            <div class="empty-sub">Создайте первую сделку через кнопку +</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHATS -->
+      <section class="screen" id="screen-chats">
+        <h2 class="screen-title">Чаты</h2>
+        <div class="search-box">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Поиск" id="chats-search" />
+        </div>
+        <div class="chat-list">
+          <div class="chat-item" data-chat="notifications">
+            <div class="chat-icon yellow">🔔</div>
+            <div class="chat-info">
+              <div class="chat-name">Уведомления <span class="verified">✓</span></div>
+              <div class="chat-last">Напоминания о сделках и заявках</div>
+            </div>
+            <div class="chat-status online"></div>
+          </div>
+          <div class="chat-item" data-chat="support">
+            <div class="chat-icon green">💬</div>
+            <div class="chat-info">
+              <div class="chat-name">Поддержка <span class="verified">✓</span></div>
+              <div class="chat-last">Задать вопрос</div>
+            </div>
+            <div class="chat-status online"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section class="screen" id="screen-profile">
+        <h2 class="screen-title">Профиль</h2>
+        <div class="profile-main-card">
+          <div class="profile-main-header">
+            <div class="avatar shop large" id="profile-avatar">
+              <img id="profile-avatar-img" alt="" style="display:none;width:100%;height:100%;border-radius:14px;object-fit:cover;" />
+              <span id="profile-avatar-fallback">?</span>
+            </div>
+            <div>
+              <div class="profile-name" id="profile-name">Загрузка...</div>
+              <div class="profile-username" id="profile-username">@user</div>
+            </div>
+          </div>
+          <div class="stats-row">
+            <div class="stat"><div class="stat-value" id="stat-deals">0</div><div class="stat-label">Сделки</div></div>
+            <div class="stat"><div class="stat-value" id="stat-success">0</div><div class="stat-label">Успешных</div></div>
+            <div class="stat"><div class="stat-value rating" id="stat-rating">0.0</div><div class="stat-label">Рейтинг</div></div>
+          </div>
+          <div class="avg-time">Среднее время появится после завершённых сделок</div>
+        </div>
+        <div class="verification-card" id="btn-verify">
+          <div class="verif-icon">🛡</div>
+          <div class="verif-text">
+            <div class="verif-title">Верификация</div>
+            <div class="verif-sub">Пройдите верификацию для повышения лимитов</div>
+          </div>
+          <span>›</span>
+        </div>
+      </section>
+
+      <!-- CREATE -->
+      <section class="screen" id="screen-create">
+        <div class="create-menu">
+          <div class="create-card" id="btn-new-deal">
+            <div class="create-icon">+</div>
+            <div class="create-title">Новая сделка</div>
+            <div class="create-sub">с гарантом</div>
+          </div>
+          <div class="create-card" id="btn-my-deals-create">
+            <div class="create-icon bag">🛒</div>
+            <div class="create-title">Мои сделки</div>
+            <div class="create-sub">и приглашения</div>
+          </div>
+        </div>
+        <div class="service-list">
+          <div class="service-item" data-page="history"><div class="service-icon">🕒</div><span>История платежей</span><span>›</span></div>
+          <div class="service-item" data-page="reviews"><div class="service-icon">⭐</div><span>Отзывы</span><span>›</span></div>
+          <div class="service-item" data-page="rules"><div class="service-icon">❓</div><span>Помощь и правила</span><span>›</span></div>
+        </div>
+      </section>
+
+      <!-- SUPPORT CHAT -->
+      <section class="screen" id="screen-support">
+        <div class="section-header"><h2>Поддержка</h2><button class="btn-secondary small" onclick="switchScreen('chats')">Назад</button></div>
+        <div class="support-box">
+          <p>Задайте вопрос — мы ответим в ближайшее время.</p>
+          <textarea id="support-text" rows="4" placeholder="Опишите проблему..."></textarea>
+          <button class="btn-primary" id="btn-send-support" style="width:100%;margin-top:12px;">Отправить</button>
+        </div>
+      </section>
+
+      <!-- HISTORY / REVIEWS / RULES / DEPOSIT / WITHDRAW -->
+      <section class="screen" id="screen-history">
+        <div class="section-header"><h2>История платежей</h2><button class="btn-secondary small" onclick="switchScreen('home')">Назад</button></div>
+        <div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">История пуста</div><div class="empty-sub">Здесь появятся пополнения и выводы</div></div>
+      </section>
+      <section class="screen" id="screen-reviews">
+        <div class="section-header"><h2>Отзывы</h2><button class="btn-secondary small" onclick="switchScreen('home')">Назад</button></div>
+        <div class="empty-state"><div class="empty-icon">⭐</div><div class="empty-title">Отзывов пока нет</div></div>
+      </section>
+      <section class="screen" id="screen-rules">
+        <div class="section-header"><h2>Помощь и правила</h2><button class="btn-secondary small" onclick="switchScreen('home')">Назад</button></div>
+        <div class="rules-content">
+          <h3>Правила сделок</h3>
+          <p>1. Все сделки проходят через гаранта.</p>
+          <p>2. Не передавайте товар до оплаты.</p>
+          <p>3. Споры решаются поддержкой.</p>
+          <p>4. Комиссия сервиса указана при создании сделки.</p>
+          <h3>Поддержка</h3>
+          <p>Пишите в раздел «Чаты → Поддержка».</p>
+        </div>
+      </section>
+      <section class="screen" id="screen-deposit">
+        <div class="section-header"><h2>Пополнить</h2><button class="btn-secondary small" onclick="switchScreen('home')">Назад</button></div>
+        <div class="admin-form">
+          <div class="admin-field"><label>Сумма (₽)</label><input type="number" id="deposit-amount" placeholder="1000" /></div>
+          <button class="btn-primary" id="btn-deposit-go" style="width:100%">Перейти к оплате</button>
+        </div>
+      </section>
+      <section class="screen" id="screen-withdraw">
+        <div class="section-header"><h2>Вывести</h2><button class="btn-secondary small" onclick="switchScreen('home')">Назад</button></div>
+        <div class="admin-form">
+          <div class="admin-field"><label>Сумма (₽)</label><input type="number" id="withdraw-amount" placeholder="500" /></div>
+          <div class="admin-field"><label>Реквизиты</label><input type="text" id="withdraw-req" placeholder="Карта / TON / Stars" /></div>
+          <button class="btn-primary" id="btn-withdraw-go" style="width:100%">Запросить вывод</button>
+        </div>
+      </section>
+      <section class="screen" id="screen-newdeal">
+        <div class="section-header"><h2>Новая сделка</h2><button class="btn-secondary small" onclick="switchScreen('create')">Назад</button></div>
+        <div class="admin-form">
+          <div class="admin-field"><label>Название</label><input type="text" id="deal-title" placeholder="NFT подарок" /></div>
+          <div class="admin-field"><label>Цена (₽)</label><input type="number" id="deal-price" placeholder="15000" /></div>
+          <div class="admin-field"><label>Описание</label><input type="text" id="deal-desc" placeholder="Описание товара" /></div>
+          <button class="btn-primary" id="btn-create-deal" style="width:100%">Создать с гарантом</button>
+        </div>
+      </section>
+
+      <!-- ADMIN -->
+      <section class="screen" id="screen-admin">
+        <div class="admin-header">
+          <h2>🔐 Админ-панель</h2>
+          <button class="btn-secondary small" onclick="switchScreen('home')">Закрыть</button>
+        </div>
+        <p class="section-desc">Выдача баланса себе. Данные локальные.</p>
+        <div class="admin-form">
+          <div class="admin-field"><label>Рубли (₽)</label><input type="number" id="admin-rub" step="0.01" /></div>
+          <div class="admin-field"><label>Доллары ($)</label><input type="number" id="admin-usd" step="0.01" /></div>
+          <div class="admin-field"><label>Звёзды (★)</label><input type="number" id="admin-stars" step="1" /></div>
+          <div class="admin-field"><label>TON</label><input type="number" id="admin-ton" step="0.01" /></div>
+          <div class="admin-field"><label>Сделки</label><input type="number" id="admin-deals" step="1" /></div>
+          <div class="admin-field"><label>Успешных</label><input type="number" id="admin-success" step="1" /></div>
+          <div class="admin-field"><label>Рейтинг</label><input type="number" id="admin-rating" step="0.1" min="0" max="5" /></div>
+          <button class="btn-primary" id="admin-save" style="width:100%">Выдать себе</button>
+          <button class="btn-secondary" id="admin-reset" style="width:100%;margin-top:8px">Сбросить всё в 0</button>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-screen="home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Главная</span>
+      </button>
+      <button class="nav-item" data-screen="deals">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Сделки</span>
+      </button>
+      <button class="nav-item center" data-screen="create"><div class="plus-btn">+</div></button>
+      <button class="nav-item" data-screen="chats">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Чаты</span>
+      </button>
+      <button class="nav-item" data-screen="profile">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Профиль</span>
+      </button>
+    </nav>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
